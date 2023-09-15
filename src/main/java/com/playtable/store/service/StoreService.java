@@ -4,6 +4,7 @@ import com.playtable.store.domain.entity.DailyReservation;
 import com.playtable.store.domain.entity.RestDay;
 import com.playtable.store.domain.entity.Store;
 import com.playtable.store.domain.request.MenuRequest;
+import com.playtable.store.domain.request.ReviewStatisticsRequest;
 import com.playtable.store.domain.request.StoreRequest;
 import com.playtable.store.domain.request.StoreUpdateRequest;
 import com.playtable.store.domain.response.StoreDetailResponse;
@@ -99,6 +100,28 @@ public class StoreService {
         restDayRepository.saveAll(restDays);
     }
 
+    public void increaseReservation(UUID storeId) {
+
+        Store store = Store.builder().id(storeId).build();
+
+        DailyReservation dailyReservation = dailyReservationRepository
+                .findByStoreAndReservationDate(store, LocalDate.now())
+                .orElseGet(
+                        () -> dailyReservationRepository.save(
+                                DailyReservation.createToday(store))
+                );
+
+        dailyReservation.increaseTotalCount();
+    }
+
+    public void reviewStatistics(
+            UUID storeId,
+            ReviewStatisticsRequest reviewStatisticsRequest
+    ) {
+        Store store = findById(storeId);
+        store.reviewStatistics(reviewStatisticsRequest.rating());
+    }
+
     private List<RestDay> makeRestDays(List<String> days, Store store) {
         return days.stream()
                 .map(day -> RestDay.builder()
@@ -120,19 +143,4 @@ public class StoreService {
                 .findByIdFetch(id)
                 .orElseThrow(()-> new NoSuchElementException("store not found : " + id));
     }
-    public void increaseReservation(UUID storeId) {
-
-        Store store = Store.builder().id(storeId).build();
-
-        DailyReservation dailyReservation = dailyReservationRepository
-                .findByStoreAndReservationDate(store, LocalDate.now())
-                .orElseGet(
-                        () -> dailyReservationRepository.save(
-                                DailyReservation.createToday(store))
-                );
-
-        dailyReservation.increaseTotalCount();
-    }
-
-
 }

@@ -36,6 +36,11 @@ public class Store {
     @OneToMany(mappedBy = "store")
     private Set<RestDay> restDays = new HashSet<>();
 
+    public void reviewStatistics(Long rating){
+        this.totalRating += rating;
+        this.reviewCount++;
+    }
+
     public void informationUpdate(
             String name,
             String contact,

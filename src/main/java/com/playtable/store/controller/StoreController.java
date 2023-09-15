@@ -1,6 +1,7 @@
 package com.playtable.store.controller;
 
 import com.playtable.store.domain.request.MenuRequest;
+import com.playtable.store.domain.request.ReviewStatisticsRequest;
 import com.playtable.store.domain.request.StoreRequest;
 import com.playtable.store.domain.request.StoreUpdateRequest;
 import com.playtable.store.domain.response.StoreDetailResponse;
@@ -51,8 +52,18 @@ public class StoreController {
     }
 
     @PutMapping("/{storeId}/reservation")
+    @ResponseStatus(HttpStatus.CREATED)
     public void increaseReservation(@PathVariable("storeId") UUID storeId){
         storeService.increaseReservation(storeId);
+    }
+
+    @PutMapping("/{storeId}/review")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void reviewStatistics(
+            @PathVariable("storeId") UUID storeId,
+            @RequestBody ReviewStatisticsRequest reviewStatisticsRequest
+    ){
+        storeService.reviewStatistics(storeId, reviewStatisticsRequest);
     }
 
     @PostMapping
