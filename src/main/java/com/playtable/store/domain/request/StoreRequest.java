@@ -32,6 +32,8 @@ public record StoreRequest(
                 .address(address)
                 .reviewCount(0)
                 .totalRating(0L)
+                .isReservationAble(false)
+                .isWaitingAble(false)
                 .category(Category.valueOf(category))
                 .imageUrl(imageUrl)
                 .openTime(openTime)

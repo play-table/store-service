@@ -25,6 +25,8 @@ public class Store {
     private String imageUrl;
     private Integer reviewCount;
     private Long totalRating;
+    private Boolean isWaitingAble;
+    private Boolean isReservationAble;
     private LocalTime openTime;
     private LocalTime closeTime;
     private LocalTime breakStartTime;
@@ -39,6 +41,14 @@ public class Store {
     public void reviewStatistics(Long rating){
         this.totalRating += rating;
         this.reviewCount++;
+    }
+
+    public void reservationOpen(){
+        this.isReservationAble = true;
+    }
+
+    public void waitingOpen(){
+        this.isWaitingAble = true;
     }
 
     public void informationUpdate(

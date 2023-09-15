@@ -1,12 +1,11 @@
 package com.playtable.store.service;
 
+import com.playtable.store.client.api.ReservationClient;
+import com.playtable.store.client.request.OpenRequest;
 import com.playtable.store.domain.entity.DailyReservation;
 import com.playtable.store.domain.entity.RestDay;
 import com.playtable.store.domain.entity.Store;
-import com.playtable.store.domain.request.MenuRequest;
-import com.playtable.store.domain.request.ReviewStatisticsRequest;
-import com.playtable.store.domain.request.StoreRequest;
-import com.playtable.store.domain.request.StoreUpdateRequest;
+import com.playtable.store.domain.request.*;
 import com.playtable.store.domain.response.StoreDetailResponse;
 import com.playtable.store.domain.response.WaitingTopStoreResponse;
 import com.playtable.store.domain.response.StoreSummaryResponse;
@@ -33,6 +32,7 @@ public class StoreService {
     private final MenuRepository menuRepository;
     private final RestDayRepository restDayRepository;
     private final DailyReservationRepository dailyReservationRepository;
+    private final ReservationClient reservationClient;
 
     public StoreDetailResponse getById(UUID storeId){
         Store store = findById(storeId);
@@ -54,12 +54,7 @@ public class StoreService {
                                 LocalDate.now() :
                                 date)
                 .stream()
-                .map(
-                        dailyReservation-> WaitingTopStoreResponse
-                                .from(
-                                        dailyReservation.getStore(),
-                                        dailyReservation.getTodayWaitingCount()
-                                ))
+                .map(WaitingTopStoreResponse::from)
                 .toList();
     }
 
@@ -75,10 +70,8 @@ public class StoreService {
         restDayRepository.saveAll(restDays);
     }
 
-    public void update(UUID ownerId, UUID storeId, StoreUpdateRequest storeUpdateRequest){
+    public void update(UUID storeId, StoreUpdateRequest storeUpdateRequest){
         Store store = findById(storeId);
-
-        isValidStoreOwner(store, ownerId);
 
         store.informationUpdate(
                 storeUpdateRequest.name(),
@@ -102,7 +95,7 @@ public class StoreService {
 
     public void increaseReservation(UUID storeId) {
 
-        Store store = Store.builder().id(storeId).build();
+        Store store = findById(storeId);
 
         DailyReservation dailyReservation = dailyReservationRepository
                 .findByStoreAndReservationDate(store, LocalDate.now())
@@ -120,6 +113,19 @@ public class StoreService {
     ) {
         Store store = findById(storeId);
         store.reviewStatistics(reviewStatisticsRequest.rating());
+    }
+    public void reservationOpen(UUID storeId, ReservationRequest reservationRequest) {
+        Store store = findById(storeId);
+        store.reservationOpen();
+        reservationClient.reservationOpen(
+                storeId.toString(),
+                OpenRequest.of(reservationRequest.seats())
+        );
+    }
+
+    public void waitingOpen(UUID storeId) {
+        Store store = findById(storeId);
+        store.waitingOpen();
     }
 
     private List<RestDay> makeRestDays(List<String> days, Store store) {
@@ -143,4 +149,5 @@ public class StoreService {
                 .findByIdFetch(id)
                 .orElseThrow(()-> new NoSuchElementException("store not found : " + id));
     }
+
 }

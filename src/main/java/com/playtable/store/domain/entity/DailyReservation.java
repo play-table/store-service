@@ -14,7 +14,7 @@ public class DailyReservation {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
+    @ManyToOne()
     private Store store;
     private LocalDate reservationDate;
     private Integer todayWaitingCount;

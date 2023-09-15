@@ -1,9 +1,7 @@
 package com.playtable.store.controller;
 
-import com.playtable.store.domain.request.MenuRequest;
-import com.playtable.store.domain.request.ReviewStatisticsRequest;
-import com.playtable.store.domain.request.StoreRequest;
-import com.playtable.store.domain.request.StoreUpdateRequest;
+import com.playtable.store.config.OwnerTokenInfo;
+import com.playtable.store.domain.request.*;
 import com.playtable.store.domain.response.StoreDetailResponse;
 import com.playtable.store.domain.response.WaitingTopStoreResponse;
 import com.playtable.store.domain.response.StoreSummaryResponse;
@@ -11,6 +9,7 @@ import com.playtable.store.service.StoreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -31,6 +30,21 @@ public class StoreController {
             @RequestBody MenuRequest menuRequest
     ){
         storeService.menuRegister(storeId, menuRequest);
+    }
+
+    @PutMapping("/{storeId}/reservation/open")
+    public void reservationOpen(
+            @PathVariable("storeId") UUID storeId,
+            @RequestBody ReservationRequest reservationRequest
+    ){
+        storeService.reservationOpen(storeId, reservationRequest);
+    }
+
+    @PutMapping("/{storeId}/waiting/open")
+    public void waitingOpen(
+            @PathVariable("storeId") UUID storeId
+    ){
+        storeService.waitingOpen(storeId);
     }
 
     @GetMapping
@@ -68,9 +82,11 @@ public class StoreController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void register(@RequestBody StoreRequest storeRequest){
-        UUID ownerId = UUID.randomUUID();
-        storeService.register(ownerId, storeRequest);
+    public void register(
+            @AuthenticationPrincipal OwnerTokenInfo ownerTokenInfo,
+            @RequestBody StoreRequest storeRequest
+    ){
+        storeService.register(ownerTokenInfo.getId(), storeRequest);
     }
 
     @PutMapping("/{storeId}")
@@ -79,7 +95,6 @@ public class StoreController {
             @PathVariable("storeId") UUID storeId,
             @RequestBody StoreUpdateRequest storeUpdateRequest
     ){
-        UUID ownerId = UUID.randomUUID();
-        storeService.update(ownerId, storeId, storeUpdateRequest);
+        storeService.update(storeId, storeUpdateRequest);
     }
 }
