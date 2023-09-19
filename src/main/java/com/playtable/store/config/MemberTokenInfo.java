@@ -15,11 +15,17 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder @Getter
-public class OwnerTokenInfo implements UserDetails {
+public class MemberTokenInfo implements UserDetails {
 
     private UUID id;
-    private String name;
+    private String username;
+    private String email;
+
+    private String realName;
+    private String contact;
     private String role;
+    private String nickName;
+    private String profileImage;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -33,7 +39,7 @@ public class OwnerTokenInfo implements UserDetails {
 
     @Override
     public String getUsername() {
-        return name;
+        return username;
     }
 
     @Override

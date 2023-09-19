@@ -29,20 +29,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String token = authHeader.replace("Bearer ", "");
-        OwnerTokenInfo ownerTokenInfo;
+        MemberTokenInfo memberTokenInfo;
 
         try{
-            ownerTokenInfo = jwtService.extractUser(token);
+            memberTokenInfo = jwtService.extractUser(token);
         } catch (Exception ignored){
-            ownerTokenInfo = null;
+            memberTokenInfo = null;
         }
 
-        if(ownerTokenInfo != null &&
-                !ownerTokenInfo.getId().toString().isEmpty() &&
+        if(memberTokenInfo != null &&
+                !memberTokenInfo.getId().toString().isEmpty() &&
                 SecurityContextHolder.getContext().getAuthentication() ==null
         ){
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                    ownerTokenInfo, null, ownerTokenInfo.getAuthorities()
+                    memberTokenInfo, null, memberTokenInfo.getAuthorities()
             );
             SecurityContextHolder.getContext().setAuthentication(authToken);
         }
