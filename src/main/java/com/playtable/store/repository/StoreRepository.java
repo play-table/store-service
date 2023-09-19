@@ -15,5 +15,6 @@ public interface StoreRepository extends JpaRepository<Store, UUID> {
     @Query("select s from Store s left join fetch s.restDays left join fetch s.menus where s.id = :id")
     Optional<Store> findByIdFetch(@Param("id") UUID id);
 
+    List<Store> findByOwnerId(UUID ownerId);
     List<Store> findByNameContaining(String name);
 }

@@ -9,6 +9,7 @@ public record StoreDto(
         UUID id,
         String name,
         String address,
+        String imageUrl,
         Category category,
         Integer reviewCount,
         Long totalRating
@@ -18,6 +19,7 @@ public record StoreDto(
                 store.getId(),
                 store.getName(),
                 store.getAddress(),
+                store.getImageUrl(),
                 store.getCategory(),
                 store.getReviewCount(),
                 store.getTotalRating()

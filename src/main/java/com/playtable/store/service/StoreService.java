@@ -2,6 +2,7 @@ package com.playtable.store.service;
 
 import com.playtable.store.client.api.ReservationClient;
 import com.playtable.store.client.request.OpenRequest;
+import com.playtable.store.config.MemberTokenInfo;
 import com.playtable.store.domain.entity.DailyReservation;
 import com.playtable.store.domain.entity.RestDay;
 import com.playtable.store.domain.entity.Store;
@@ -150,4 +151,11 @@ public class StoreService {
                 .orElseThrow(()-> new NoSuchElementException("store not found : " + id));
     }
 
+    public List<StoreDetailResponse> getMyStore(MemberTokenInfo memberTokenInfo) {
+        return storeRepository
+                .findByOwnerId(memberTokenInfo.getId())
+                .stream()
+                .map(StoreDetailResponse::from)
+                .toList();
+    }
 }

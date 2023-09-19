@@ -4,6 +4,7 @@ import com.playtable.store.domain.dto.MenuDto;
 import com.playtable.store.domain.dto.RestDayDto;
 import com.playtable.store.domain.entity.Category;
 import com.playtable.store.domain.entity.Store;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -23,7 +24,9 @@ public record StoreDetailResponse(
         LocalTime breakStartTime,
         LocalTime breakEndTime,
         List<MenuDto> menus,
-        List<RestDayDto> restDays
+        List<RestDayDto> restDays,
+        Boolean isWaitingAble,
+        Boolean isReservationAble
 
 ) {
     public static StoreDetailResponse from(Store store) {
@@ -41,7 +44,9 @@ public record StoreDetailResponse(
                 store.getBreakStartTime(),
                 store.getBreakEndTime(),
                 store.getMenus().stream().map(MenuDto::from).toList(),
-                store.getRestDays().stream().map(RestDayDto::from).toList()
+                store.getRestDays().stream().map(RestDayDto::from).toList(),
+                store.getIsWaitingAble(),
+                store.getIsReservationAble()
         );
     }
 }

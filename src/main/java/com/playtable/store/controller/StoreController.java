@@ -1,6 +1,7 @@
 package com.playtable.store.controller;
 
-import com.playtable.store.config.OwnerTokenInfo;
+import com.playtable.store.config.MemberTokenInfo;
+import com.playtable.store.domain.entity.Store;
 import com.playtable.store.domain.request.*;
 import com.playtable.store.domain.response.StoreDetailResponse;
 import com.playtable.store.domain.response.WaitingTopStoreResponse;
@@ -22,6 +23,11 @@ import java.util.UUID;
 public class StoreController {
 
     private final StoreService storeService;
+
+    @GetMapping("/my")
+    public List<StoreDetailResponse> getMyStore(@AuthenticationPrincipal MemberTokenInfo memberTokenInfo){
+        return storeService.getMyStore(memberTokenInfo);
+    }
 
     @PostMapping("/{storeId}/menu")
     @ResponseStatus(HttpStatus.CREATED)
@@ -83,10 +89,10 @@ public class StoreController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void register(
-            @AuthenticationPrincipal OwnerTokenInfo ownerTokenInfo,
+            @AuthenticationPrincipal MemberTokenInfo memberTokenInfo,
             @RequestBody StoreRequest storeRequest
     ){
-        storeService.register(ownerTokenInfo.getId(), storeRequest);
+        storeService.register(memberTokenInfo.getId(), storeRequest);
     }
 
     @PutMapping("/{storeId}")
