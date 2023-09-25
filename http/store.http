@@ -1,0 +1,16 @@
+### 가게 정보 업데이트
+PUT http://192.168.0.203:54145/api/v1/store/1e92b7f8-85ea-44cf-8df1-4b03180c16b2
+Content-Type: application/json
+
+{
+  "name" : "변경된이름",
+  "contact" : "22222",
+  "address" :  "111111",
+  "category" : "KOREAN",
+  "imageUrl" :  "aaaaaaaa",
+  "openTime" : "11:30",
+  "closeTime" :  "11:30",
+  "breakStartTime" : "11:30",
+  "breakEndTime" :  "11:30",
+  "days" : ["MONDAY"]
+}
