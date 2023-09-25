@@ -1,12 +1,12 @@
 package com.playtable.store.controller;
 
 import com.playtable.store.config.MemberTokenInfo;
-import com.playtable.store.domain.entity.Store;
 import com.playtable.store.domain.request.*;
 import com.playtable.store.domain.response.StoreDetailResponse;
-import com.playtable.store.domain.response.WaitingTopStoreResponse;
 import com.playtable.store.domain.response.StoreSummaryResponse;
-import com.playtable.store.service.StoreService;
+import com.playtable.store.domain.response.WaitingTopStoreResponse;
+import com.playtable.store.service.StoreCommandService;
+import com.playtable.store.service.StoreQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -20,22 +20,16 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/store")
-public class StoreController {
+public class StoreCommandController {
 
-    private final StoreService storeService;
-
-    @GetMapping("/my")
-    public List<StoreDetailResponse> getMyStore(@AuthenticationPrincipal MemberTokenInfo memberTokenInfo){
-        return storeService.getMyStore(memberTokenInfo);
-    }
-
+    private final StoreCommandService storeCommandService;
     @PostMapping("/{storeId}/menu")
     @ResponseStatus(HttpStatus.CREATED)
     public void menuRegister(
             @PathVariable("storeId") UUID storeId,
             @RequestBody MenuRequest menuRequest
     ){
-        storeService.menuRegister(storeId, menuRequest);
+        storeCommandService.menuRegister(storeId, menuRequest);
     }
 
     @PutMapping("/{storeId}/reservation/open")
@@ -43,38 +37,20 @@ public class StoreController {
             @PathVariable("storeId") UUID storeId,
             @RequestBody ReservationRequest reservationRequest
     ){
-        storeService.reservationOpen(storeId, reservationRequest);
+        storeCommandService.reservationOpen(storeId, reservationRequest);
     }
 
     @PutMapping("/{storeId}/waiting/open")
     public void waitingOpen(
             @PathVariable("storeId") UUID storeId
     ){
-        storeService.waitingOpen(storeId);
-    }
-
-    @GetMapping
-    public List<StoreSummaryResponse> getByName(@RequestParam("name") String name){
-        return storeService.getByName(name);
-    }
-    @GetMapping("/{storeId}")
-    public StoreDetailResponse getById(@PathVariable("storeId") UUID storeId){
-        return storeService.getById(storeId);
-    }
-
-    @GetMapping("/waiting-top")
-    public List<WaitingTopStoreResponse> getTodayWaitingTopStore(
-            @RequestParam(value = "date", required = false)
-            @DateTimeFormat(pattern = "yyyy-MM-dd")
-            LocalDate date
-    ){
-        return storeService.getWaitingTopStoreDate(date);
+        storeCommandService.waitingOpen(storeId);
     }
 
     @PutMapping("/{storeId}/reservation")
     @ResponseStatus(HttpStatus.CREATED)
     public void increaseReservation(@PathVariable("storeId") UUID storeId){
-        storeService.increaseReservation(storeId);
+//        storeCommandService.increaseReservation(storeId);
     }
 
     @PutMapping("/{storeId}/review")
@@ -83,7 +59,7 @@ public class StoreController {
             @PathVariable("storeId") UUID storeId,
             @RequestBody ReviewStatisticsRequest reviewStatisticsRequest
     ){
-        storeService.reviewStatistics(storeId, reviewStatisticsRequest);
+//        storeCommandService.reviewStatistics(storeId, reviewStatisticsRequest);
     }
 
     @PostMapping
@@ -92,7 +68,7 @@ public class StoreController {
             @AuthenticationPrincipal MemberTokenInfo memberTokenInfo,
             @RequestBody StoreRequest storeRequest
     ){
-        storeService.register(memberTokenInfo.getId(), storeRequest);
+        storeCommandService.register(memberTokenInfo.getId(), storeRequest);
     }
 
     @PutMapping("/{storeId}")
@@ -101,6 +77,6 @@ public class StoreController {
             @PathVariable("storeId") UUID storeId,
             @RequestBody StoreUpdateRequest storeUpdateRequest
     ){
-        storeService.update(storeId, storeUpdateRequest);
+        storeCommandService.update(storeId, storeUpdateRequest);
     }
 }

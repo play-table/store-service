@@ -9,7 +9,6 @@ import com.playtable.store.domain.response.StoreDetailResponse;
 import com.playtable.store.repository.RestDayRepository;
 import com.playtable.store.repository.StoreRepository;
 import jakarta.persistence.EntityManager;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -27,10 +26,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-class StoreServiceTest {
+class StoreQueryServiceTest {
 
     @Autowired
-    StoreService storeService;
+    StoreQueryService storeQueryService;
+    @Autowired
+    StoreCommandService storeCommandService;
     @Autowired
     StoreRepository storeRepository;
     @Autowired
@@ -89,7 +90,7 @@ class StoreServiceTest {
             //init에서 한 건 저장함
 
             //when
-            StoreDetailResponse storeDetailResponse = storeService.getById(initStore.getId());
+            StoreDetailResponse storeDetailResponse = storeQueryService.getById(initStore.getId());
 
             //then
             assertThat(storeDetailResponse.id()).isEqualTo(initStore.getId());
@@ -117,7 +118,7 @@ class StoreServiceTest {
             //when, then
             assertThrows(
                     NoSuchElementException.class,
-                    ()->storeService.getById(invalidStoreId));
+                    ()-> storeQueryService.getById(invalidStoreId));
         }
 
         @Test
@@ -147,7 +148,7 @@ class StoreServiceTest {
             );
 
             //when
-            storeService.update(
+            storeCommandService.update(
                     initStore.getOwnerId(),
                     storeUpdateRequest);
 
@@ -211,7 +212,7 @@ class StoreServiceTest {
             );
 
             //when
-            storeService.register(ownerId, storeRequest);
+            storeCommandService.register(ownerId, storeRequest);
 
             entityManager.flush();
             entityManager.clear();
